@@ -12,7 +12,7 @@ class Hypothesis {
 function mod6ToDie(value) {
     let result = value % 6;
     if (result <= 0) result += 6;
-    return result === 0 ? 6 : result;
+    return result;
 }
 
 function computeCorrectValue(phase, a, b, c) {
@@ -159,16 +159,22 @@ class GameState {
 
 let gameState = null;
 
-// UI Event Listeners
-document.getElementById("manual-btn").addEventListener("click", () => {
+// UI Event Listeners - only attach if elements exist
+const manualBtn = document.getElementById("manual-btn");
+const autoplayBtn = document.getElementById("autoplay-btn");
+const startBtn = document.getElementById("start-btn");
+const nextRoundBtn = document.getElementById("next-round-btn");
+const playAgainBtn = document.getElementById("play-again-btn");
+
+if (manualBtn) manualBtn.addEventListener("click", () => {
     selectMode("manual");
 });
 
-document.getElementById("autoplay-btn").addEventListener("click", () => {
+if (autoplayBtn) autoplayBtn.addEventListener("click", () => {
     selectMode("autoplay");
 });
 
-document.getElementById("start-btn").addEventListener("click", startGame);
+if (startBtn) startBtn.addEventListener("click", startGame);
 
 document.querySelectorAll(".guess-btn").forEach(btn => {
     btn.addEventListener("click", (e) => {
@@ -176,11 +182,12 @@ document.querySelectorAll(".guess-btn").forEach(btn => {
     });
 });
 
-document.getElementById("next-round-btn").addEventListener("click", () => {
+if (nextRoundBtn) nextRoundBtn.addEventListener("click", () => {
     gameState.roundNumber++;
     nextRound();
 });
-document.getElementById("play-again-btn").addEventListener("click", () => location.reload());
+
+if (playAgainBtn) playAgainBtn.addEventListener("click", () => location.reload());
 
 function selectMode(mode) {
     const manualBtn = document.getElementById("manual-btn");
