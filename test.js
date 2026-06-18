@@ -38,7 +38,8 @@ class Hypothesis {
 }
 
 function mod6ToDie(value) {
-    const result = value % 6;
+    let result = value % 6;
+    if (result <= 0) result += 6;
     return result === 0 ? 6 : result;
 }
 
