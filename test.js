@@ -40,7 +40,7 @@ class Hypothesis {
 function mod6ToDie(value) {
     let result = value % 6;
     if (result <= 0) result += 6;
-    return result === 0 ? 6 : result;
+    return result;
 }
 
 function computeCorrectValue(phase, a, b, c) {

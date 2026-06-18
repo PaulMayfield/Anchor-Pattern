@@ -138,8 +138,7 @@ def feedback_message(feedback: str) -> str:
     return random.choice(messages[feedback])
 
 
-def main() -> None:
-    mode = choose_mode()
+def play_game(autoplay: bool) -> int:
     rotation = random.sample(PHASES, k=len(PHASES))
     current_phase_index = 0
     c = 0
@@ -148,34 +147,27 @@ def main() -> None:
     round_number = 1
     hypotheses = initial_hypotheses()
 
-    print("Anchor Pattern")
-    print("--------------")
-    print("Win condition: get two rounds in a row where your guess is correct and your roll is correct.")
-    if mode == "autoplay":
-        print("Autoplay mode is on. I will make the guesses.")
-    print()
-
     while streak < 2:
         phase = rotation[current_phase_index]
         a = random.randint(1, 6)
         b = random.randint(1, 6)
         correct_value = compute_correct_value(phase, a, b, c)
 
-        print(f"Round {round_number}")
-        print(f"Anchor roll: {a}")
-        print(f"Pattern-setter roll: {b}")
-
-        if mode == "autoplay":
+        if autoplay:
             guess = choose_autoplay_guess(hypotheses, a, b)
-            print(f"Autoplay guess: {guess}")
         else:
+            print(f"Round {round_number}")
+            print(f"Anchor roll: {a}")
+            print(f"Pattern-setter roll: {b}")
             guess = get_player_guess()
 
         roll = random.randint(1, 6)
-        print(f"Your third roll: {roll}")
 
         feedback = classify_feedback(correct_value, guess, roll)
-        print(f"Feedback: {feedback_message(feedback)}")
+
+        if not autoplay:
+            print(f"Your third roll: {roll}")
+            print(f"Feedback: {feedback_message(feedback)}")
 
         if feedback == "both":
             streak += 1
@@ -188,18 +180,25 @@ def main() -> None:
         if not hypotheses:
             hypotheses = initial_hypotheses()
 
-        print(f"Current win streak: {streak}")
-        if mode == "autoplay":
+        if not autoplay:
+            print(f"Current win streak: {streak}")
             print(f"Remaining candidate theories: {len(hypotheses)}")
-        print()
+            print()
+
         round_number += 1
 
-    if mode == "autoplay":
-        print(f"See, that was easy, I figured it out in {round_number - 1} rounds!!!")
+    return round_number - 1
+
+def main() -> None:
+    mode = choose_mode()
+    autoplay = mode == "autoplay"
+
+    rounds = play_game(autoplay)
+
+    if autoplay:
+        print(f"See, that was easy, I figured it out in {rounds} rounds!!!")
     else:
-        print(f"You win in {round_number - 1} rounds!")
-    print(f"Hidden rotation was: {' -> '.join(rotation)}")
-    print(f"Hidden offset was: {offset}")
+        print(f"You win in {rounds} rounds!")
 
 
 if __name__ == "__main__":
