@@ -240,14 +240,19 @@ function nextRound() {
     document.getElementById("pattern-roll").textContent = gameState.currentB;
     document.getElementById("third-roll").textContent = "-";
     
+    // Always show guess section at start of round
     document.getElementById("guess-section").classList.remove("hidden");
+    // Hide feedback section
+    document.getElementById("feedback-section").classList.remove("show");
     document.getElementById("feedback-section").classList.add("hidden");
     
     if (gameState.mode === "autoplay") {
-        console.log(`[nextRound] AUTOPLAY MODE - Showing autoplay section only`);
-        const guessButtonsDiv = document.querySelector(".guess-buttons");
-        if (guessButtonsDiv) guessButtonsDiv.classList.add("hidden");
+        console.log(`[nextRound] AUTOPLAY MODE`);
+        // Hide guess buttons, show autoplay section
+        document.querySelector(".guess-buttons").classList.add("hidden");
         document.getElementById("autoplay-guess").classList.remove("hidden");
+        document.getElementById("autoplay-guess").classList.add("show");
+        
         const nextRoundBtn = document.getElementById("next-round-btn");
         if (nextRoundBtn) nextRoundBtn.classList.add("hidden");
         
@@ -257,18 +262,20 @@ function nextRound() {
         document.getElementById("autoplay-value").textContent = autoplayGuess;
         
         console.log(`[nextRound] Setting timeout for ${autoplayGuess} in 750ms`);
-        // Automatically make the guess after a short delay to show the rolls
         setTimeout(() => {
             console.log(`[nextRound] Timeout fired - calling handleGuess(${autoplayGuess})`);
             handleGuess(autoplayGuess);
         }, 750);
     } else {
-        console.log(`[nextRound] MANUAL MODE - Showing guess buttons`);
-        const guessButtonsDiv = document.querySelector(".guess-buttons");
-        if (guessButtonsDiv) guessButtonsDiv.classList.remove("hidden");
+        console.log(`[nextRound] MANUAL MODE`);
+        // Show guess buttons, hide autoplay section
+        document.querySelector(".guess-buttons").classList.remove("hidden");
         document.getElementById("autoplay-guess").classList.add("hidden");
+        document.getElementById("autoplay-guess").classList.remove("show");
+        
         const nextRoundBtn = document.getElementById("next-round-btn");
         if (nextRoundBtn) nextRoundBtn.classList.remove("hidden");
+        
         document.querySelectorAll(".guess-btn").forEach(btn => btn.disabled = false);
     }
 }
@@ -327,18 +334,15 @@ function handleGuess(guess) {
     
     document.getElementById("streak").textContent = gameState.streak;
     
-    // Hide guess section and autoplay message
+    // Hide guess section, show feedback section
     document.getElementById("guess-section").classList.add("hidden");
-    document.getElementById("autoplay-guess").classList.add("hidden");
-    const guessButtonsDiv3 = document.querySelector(".guess-buttons");
-    if (guessButtonsDiv3) guessButtonsDiv3.classList.remove("hidden");
+    document.getElementById("feedback-section").classList.remove("hidden");
+    document.getElementById("feedback-section").classList.add("show");
     
     if (gameState.streak >= 2) {
         console.log(`[handleGuess] VICTORY! Streak >= 2`);
         showVictory();
     } else {
-        document.getElementById("feedback-section").classList.remove("hidden");
-        
         // In autoplay mode, automatically continue after a delay
         if (gameState.mode === "autoplay") {
             console.log(`[handleGuess] Autoplay mode - scheduling next round in 1000ms`);

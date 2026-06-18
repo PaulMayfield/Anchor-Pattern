@@ -44,24 +44,36 @@ h2 {
     display: none;
 }
 
-/* Hidden utility class */
+/* Hidden utility class - strong override */
 .hidden {
     display: none !important;
 }
 
-/* Sections with hidden toggle */
-.guess-section,
-.feedback-section,
-.guess-buttons,
-#autoplay-guess {
+/* Guess section and buttons */
+#guess-section {
     display: block;
 }
 
-.guess-section.hidden,
-.feedback-section.hidden,
-.guess-buttons.hidden,
-#autoplay-guess.hidden {
+.guess-buttons {
+    display: grid;
+}
+
+/* Autoplay section */
+#autoplay-guess {
     display: none;
+}
+
+#autoplay-guess.show {
+    display: block;
+}
+
+/* Feedback section */
+#feedback-section {
+    display: none;
+}
+
+#feedback-section.show {
+    display: block;
 }
 
 @keyframes fadeIn {
