@@ -175,11 +175,10 @@ document.querySelectorAll(".guess-btn").forEach(btn => {
     });
 });
 
-document.getElementById("continue-autoplay").addEventListener("click", () => {
-    handleGuess(gameState.currentGuess);
+document.getElementById("next-round-btn").addEventListener("click", () => {
+    gameState.roundNumber++;
+    nextRound();
 });
-
-document.getElementById("next-round-btn").addEventListener("click", nextRound);
 document.getElementById("play-again-btn").addEventListener("click", () => location.reload());
 
 function selectMode(mode) {
@@ -203,6 +202,7 @@ function startGame() {
     document.getElementById("game-setup").classList.add("hidden");
     document.getElementById("game-board").classList.remove("hidden");
     
+    gameState.roundNumber = 1;
     nextRound();
 }
 
@@ -232,19 +232,28 @@ function nextRound() {
         document.getElementById("autoplay-value").textContent = autoplayGuess;
         document.getElementById("autoplay-guess").classList.remove("hidden");
         document.getElementById("guess-buttons").classList.add("hidden");
+        
+        // Automatically make the guess after a short delay to show the rolls
+        setTimeout(() => {
+            handleGuess(autoplayGuess);
+        }, 1500);
     }
 }
 
 function handleGuess(guess) {
     gameState.currentGuess = guess;
+    
+    // Disable all guess buttons immediately
+    document.querySelectorAll(".guess-btn").forEach(btn => btn.disabled = true);
+    
+    // Roll the third die
     gameState.currentRoll = randomInt(1, 6);
     
     const phase = gameState.rotation[gameState.currentPhaseIndex];
     const correctValue = computeCorrectValue(phase, gameState.currentA, gameState.currentB, gameState.c);
     const feedback = classifyFeedback(correctValue, gameState.currentGuess, gameState.currentRoll);
     
-    document.getElementById("guess-section").classList.add("hidden");
-    document.getElementById("autoplay-guess").classList.add("hidden");
+    // Display results
     document.getElementById("third-roll").textContent = gameState.currentRoll;
     document.getElementById("feedback-message").textContent = feedbackMessage(feedback);
     
@@ -278,10 +287,22 @@ function handleGuess(guess) {
     
     document.getElementById("streak").textContent = gameState.streak;
     
+    // Hide guess section and autoplay message
+    document.getElementById("guess-section").classList.add("hidden");
+    document.getElementById("autoplay-guess").classList.add("hidden");
+    document.getElementById("guess-buttons").classList.remove("hidden");
+    
     if (gameState.streak >= 2) {
         showVictory();
     } else {
         document.getElementById("feedback-section").classList.remove("hidden");
+        
+        // In autoplay mode, automatically continue after a delay
+        if (gameState.mode === "autoplay") {
+            setTimeout(() => {
+                nextRound();
+            }, 2000);
+        }
     }
 }
 
@@ -303,9 +324,3 @@ function showVictory() {
         `Hidden offset was: ${gameState.offset}`;
 }
 
-// Update round number after showing feedback
-const originalNextRound = nextRound;
-nextRound = function() {
-    gameState.roundNumber++;
-    originalNextRound.call(this);
-};
