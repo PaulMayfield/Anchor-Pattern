@@ -239,7 +239,8 @@ function nextRound() {
     document.getElementById("third-roll").textContent = "-";
     
     document.getElementById("guess-section").classList.remove("hidden");
-    document.querySelector(".guess-buttons").classList.remove("hidden");
+    const guessButtonsDiv = document.querySelector(".guess-buttons");
+    if (guessButtonsDiv) guessButtonsDiv.classList.remove("hidden");
     document.getElementById("feedback-section").classList.add("hidden");
     document.getElementById("autoplay-guess").classList.add("hidden");
     
@@ -252,7 +253,8 @@ function nextRound() {
         gameState.currentGuess = autoplayGuess;
         document.getElementById("autoplay-value").textContent = autoplayGuess;
         document.getElementById("autoplay-guess").classList.remove("hidden");
-        document.querySelector(".guess-buttons").classList.add("hidden");
+        const guessButtonsDiv2 = document.querySelector(".guess-buttons");
+        if (guessButtonsDiv2) guessButtonsDiv2.classList.add("hidden");
         
         console.log(`[nextRound] Setting timeout for ${autoplayGuess} in 1500ms`);
         // Automatically make the guess after a short delay to show the rolls
@@ -320,7 +322,8 @@ function handleGuess(guess) {
     // Hide guess section and autoplay message
     document.getElementById("guess-section").classList.add("hidden");
     document.getElementById("autoplay-guess").classList.add("hidden");
-    document.querySelector(".guess-buttons").classList.remove("hidden");
+    const guessButtonsDiv3 = document.querySelector(".guess-buttons");
+    if (guessButtonsDiv3) guessButtonsDiv3.classList.remove("hidden");
     
     if (gameState.streak >= 2) {
         console.log(`[handleGuess] VICTORY! Streak >= 2`);
