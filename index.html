@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anchor Pattern Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Anchor Pattern</h1>
+        <div id="game-setup" class="game-section">
+            <p>Win condition: Get two rounds in a row where your guess is correct AND your roll is correct.</p>
+            <div class="mode-selector">
+                <button id="manual-btn" class="mode-btn active">Play Yourself</button>
+                <button id="autoplay-btn" class="mode-btn">Autoplay</button>
+            </div>
+            <button id="start-btn" class="start-btn">Start Game</button>
+        </div>
+
+        <div id="game-board" class="game-section hidden">
+            <div id="round-info" class="round-info">
+                <h2>Round <span id="round-number">1</span></h2>
+                <p><strong>Win Streak:</strong> <span id="streak">0</span>/2</p>
+            </div>
+
+            <div class="rolls">
+                <div class="roll-box">
+                    <div class="roll-value" id="anchor-roll">-</div>
+                    <p>Anchor Roll</p>
+                </div>
+                <div class="roll-box">
+                    <div class="roll-value" id="pattern-roll">-</div>
+                    <p>Pattern-setter Roll</p>
+                </div>
+            </div>
+
+            <div id="guess-section" class="guess-section">
+                <p><strong>What is your guess for the third value (1-6)?</strong></p>
+                <div class="guess-buttons">
+                    <button class="guess-btn" data-value="1">1</button>
+                    <button class="guess-btn" data-value="2">2</button>
+                    <button class="guess-btn" data-value="3">3</button>
+                    <button class="guess-btn" data-value="4">4</button>
+                    <button class="guess-btn" data-value="5">5</button>
+                    <button class="guess-btn" data-value="6">6</button>
+                </div>
+                <div id="autoplay-guess" class="hidden">
+                    <p>Autoplay guess: <strong id="autoplay-value">-</strong></p>
+                    <button id="continue-autoplay" class="continue-btn">Continue</button>
+                </div>
+            </div>
+
+            <div id="feedback-section" class="feedback-section hidden">
+                <div class="third-roll">
+                    <div class="roll-value" id="third-roll">-</div>
+                    <p>Your Third Roll</p>
+                </div>
+                <p id="feedback-message" class="feedback-message"></p>
+                <p id="remaining-theories" class="theories-text"></p>
+                <button id="next-round-btn" class="continue-btn">Next Round</button>
+            </div>
+        </div>
+
+        <div id="game-over" class="game-section hidden">
+            <h2>🎉 Victory!</h2>
+            <p id="victory-message"></p>
+            <p id="final-rotation" class="final-text"></p>
+            <p id="final-offset" class="final-text"></p>
+            <button id="play-again-btn" class="start-btn">Play Again</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
