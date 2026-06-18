@@ -308,6 +308,7 @@ function handleGuess(guess) {
         // In autoplay mode, automatically continue after a delay
         if (gameState.mode === "autoplay") {
             setTimeout(() => {
+                gameState.roundNumber++;
                 nextRound();
             }, 2000);
         }
