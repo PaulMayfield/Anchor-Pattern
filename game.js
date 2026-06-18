@@ -189,6 +189,9 @@ if (nextRoundBtn) nextRoundBtn.addEventListener("click", () => {
 
 if (playAgainBtn) playAgainBtn.addEventListener("click", () => location.reload());
 
+// Initialize mode selector to "manual" (matches the active button on page load)
+document.querySelector(".mode-selector").dataset.mode = "manual";
+
 function selectMode(mode) {
     const manualBtn = document.getElementById("manual-btn");
     const autoplayBtn = document.getElementById("autoplay-btn");
