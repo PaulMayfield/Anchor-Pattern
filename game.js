@@ -208,21 +208,29 @@ function selectMode(mode) {
 
 function startGame() {
     const mode = document.querySelector(".mode-selector").dataset.mode || "manual";
+    console.log(`[startGame] Mode selector dataset.mode: ${document.querySelector(".mode-selector").dataset.mode}`);
+    console.log(`[startGame] Starting game with mode: ${mode}`);
     gameState = new GameState(mode);
+    console.log(`[startGame] GameState created: mode=${gameState.mode}`);
     
     document.getElementById("game-setup").classList.add("hidden");
     document.getElementById("game-board").classList.remove("hidden");
     
     gameState.roundNumber = 1;
+    console.log(`[startGame] Calling nextRound...`);
     nextRound();
 }
 
 function nextRound() {
+    console.log(`[nextRound] Round ${gameState.roundNumber}, Mode: ${gameState.mode}, Streak: ${gameState.streak}`);
+    
     const phase = gameState.rotation[gameState.currentPhaseIndex];
     gameState.currentA = randomInt(1, 6);
     gameState.currentB = randomInt(1, 6);
     gameState.currentRoll = null;
     gameState.currentGuess = null;
+    
+    console.log(`[nextRound] Rolls: A=${gameState.currentA}, B=${gameState.currentB}, Phase=${phase}`);
     
     document.getElementById("round-number").textContent = gameState.roundNumber;
     document.getElementById("streak").textContent = gameState.streak;
@@ -238,20 +246,25 @@ function nextRound() {
     document.querySelectorAll(".guess-btn").forEach(btn => btn.disabled = false);
     
     if (gameState.mode === "autoplay") {
+        console.log(`[nextRound] AUTOPLAY MODE - Generating guess...`);
         const autoplayGuess = chooseAutoplayGuess(gameState.hypotheses, gameState.currentA, gameState.currentB);
+        console.log(`[nextRound] Autoplay guess: ${autoplayGuess}`);
         gameState.currentGuess = autoplayGuess;
         document.getElementById("autoplay-value").textContent = autoplayGuess;
         document.getElementById("autoplay-guess").classList.remove("hidden");
         document.getElementById("guess-buttons").classList.add("hidden");
         
+        console.log(`[nextRound] Setting timeout for ${autoplayGuess} in 1500ms`);
         // Automatically make the guess after a short delay to show the rolls
         setTimeout(() => {
+            console.log(`[nextRound] Timeout fired - calling handleGuess(${autoplayGuess})`);
             handleGuess(autoplayGuess);
         }, 1500);
     }
 }
 
 function handleGuess(guess) {
+    console.log(`[handleGuess] Called with guess=${guess}, mode=${gameState.mode}`);
     gameState.currentGuess = guess;
     
     // Disable all guess buttons immediately
@@ -259,10 +272,12 @@ function handleGuess(guess) {
     
     // Roll the third die
     gameState.currentRoll = randomInt(1, 6);
+    console.log(`[handleGuess] Third roll: ${gameState.currentRoll}`);
     
     const phase = gameState.rotation[gameState.currentPhaseIndex];
     const correctValue = computeCorrectValue(phase, gameState.currentA, gameState.currentB, gameState.c);
     const feedback = classifyFeedback(correctValue, gameState.currentGuess, gameState.currentRoll);
+    console.log(`[handleGuess] Phase: ${phase}, CorrectValue: ${correctValue}, Feedback: ${feedback}`);
     
     // Display results
     document.getElementById("third-roll").textContent = gameState.currentRoll;
@@ -279,8 +294,10 @@ function handleGuess(guess) {
         gameState.streak++;
         gameState.currentPhaseIndex = (gameState.currentPhaseIndex + 1) % gameState.rotation.length;
         gameState.c = (gameState.c + gameState.offset) % 6;
+        console.log(`[handleGuess] Correct! Streak now: ${gameState.streak}`);
     } else {
         gameState.streak = 0;
+        console.log(`[handleGuess] Incorrect. Streak reset to 0`);
     }
     
     gameState.hypotheses = filterHypotheses(
@@ -291,9 +308,11 @@ function handleGuess(guess) {
         gameState.currentRoll,
         feedback
     );
+    console.log(`[handleGuess] Hypotheses remaining: ${gameState.hypotheses.length}`);
     
     if (gameState.hypotheses.length === 0) {
         gameState.hypotheses = initialHypotheses();
+        console.log(`[handleGuess] Hypotheses emptied, reset to ${gameState.hypotheses.length}`);
     }
     
     document.getElementById("streak").textContent = gameState.streak;
@@ -304,13 +323,16 @@ function handleGuess(guess) {
     document.getElementById("guess-buttons").classList.remove("hidden");
     
     if (gameState.streak >= 2) {
+        console.log(`[handleGuess] VICTORY! Streak >= 2`);
         showVictory();
     } else {
         document.getElementById("feedback-section").classList.remove("hidden");
         
         // In autoplay mode, automatically continue after a delay
         if (gameState.mode === "autoplay") {
+            console.log(`[handleGuess] Autoplay mode - scheduling next round in 2000ms`);
             setTimeout(() => {
+                console.log(`[handleGuess] 2000ms timeout fired - incrementing round and calling nextRound`);
                 gameState.roundNumber++;
                 nextRound();
             }, 2000);
