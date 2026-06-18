@@ -298,7 +298,8 @@ function handleGuess(guess) {
     
     // Display results
     document.getElementById("third-roll").textContent = gameState.currentRoll;
-    document.getElementById("feedback-message").textContent = feedbackMessage(feedback);
+    const feedbackMsg = `Guessed: ${gameState.currentGuess}.  Feedback: ${feedbackMessage(feedback)}`;
+    document.getElementById("feedback-message").textContent = feedbackMsg;
     
     if (gameState.mode === "autoplay") {
         document.getElementById("remaining-theories").textContent = `Remaining candidate theories: ${gameState.hypotheses.length}`;
