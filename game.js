@@ -240,29 +240,35 @@ function nextRound() {
     document.getElementById("third-roll").textContent = "-";
     
     document.getElementById("guess-section").classList.remove("hidden");
-    const guessButtonsDiv = document.querySelector(".guess-buttons");
-    if (guessButtonsDiv) guessButtonsDiv.classList.remove("hidden");
     document.getElementById("feedback-section").classList.add("hidden");
-    document.getElementById("autoplay-guess").classList.add("hidden");
-    
-    document.querySelectorAll(".guess-btn").forEach(btn => btn.disabled = false);
     
     if (gameState.mode === "autoplay") {
-        console.log(`[nextRound] AUTOPLAY MODE - Generating guess...`);
+        console.log(`[nextRound] AUTOPLAY MODE - Showing autoplay section only`);
+        const guessButtonsDiv = document.querySelector(".guess-buttons");
+        if (guessButtonsDiv) guessButtonsDiv.classList.add("hidden");
+        document.getElementById("autoplay-guess").classList.remove("hidden");
+        const nextRoundBtn = document.getElementById("next-round-btn");
+        if (nextRoundBtn) nextRoundBtn.classList.add("hidden");
+        
         const autoplayGuess = chooseAutoplayGuess(gameState.hypotheses, gameState.currentA, gameState.currentB);
         console.log(`[nextRound] Autoplay guess: ${autoplayGuess}`);
         gameState.currentGuess = autoplayGuess;
         document.getElementById("autoplay-value").textContent = autoplayGuess;
-        document.getElementById("autoplay-guess").classList.remove("hidden");
-        const guessButtonsDiv2 = document.querySelector(".guess-buttons");
-        if (guessButtonsDiv2) guessButtonsDiv2.classList.add("hidden");
         
-        console.log(`[nextRound] Setting timeout for ${autoplayGuess} in 1500ms`);
+        console.log(`[nextRound] Setting timeout for ${autoplayGuess} in 750ms`);
         // Automatically make the guess after a short delay to show the rolls
         setTimeout(() => {
             console.log(`[nextRound] Timeout fired - calling handleGuess(${autoplayGuess})`);
             handleGuess(autoplayGuess);
-        }, 1500);
+        }, 750);
+    } else {
+        console.log(`[nextRound] MANUAL MODE - Showing guess buttons`);
+        const guessButtonsDiv = document.querySelector(".guess-buttons");
+        if (guessButtonsDiv) guessButtonsDiv.classList.remove("hidden");
+        document.getElementById("autoplay-guess").classList.add("hidden");
+        const nextRoundBtn = document.getElementById("next-round-btn");
+        if (nextRoundBtn) nextRoundBtn.classList.remove("hidden");
+        document.querySelectorAll(".guess-btn").forEach(btn => btn.disabled = false);
     }
 }
 
@@ -334,12 +340,12 @@ function handleGuess(guess) {
         
         // In autoplay mode, automatically continue after a delay
         if (gameState.mode === "autoplay") {
-            console.log(`[handleGuess] Autoplay mode - scheduling next round in 2000ms`);
+            console.log(`[handleGuess] Autoplay mode - scheduling next round in 1000ms`);
             setTimeout(() => {
-                console.log(`[handleGuess] 2000ms timeout fired - incrementing round and calling nextRound`);
+                console.log(`[handleGuess] 1000ms timeout fired - incrementing round and calling nextRound`);
                 gameState.roundNumber++;
                 nextRound();
-            }, 2000);
+            }, 1000);
         }
     }
 }
@@ -350,10 +356,10 @@ function showVictory() {
     
     if (gameState.mode === "autoplay") {
         document.getElementById("victory-message").textContent = 
-            `See, that was easy, I figured it out in ${gameState.roundNumber - 1} rounds!!!`;
+            `See, that was easy, I figured it out in ${gameState.roundNumber} rounds!!!`;
     } else {
         document.getElementById("victory-message").textContent = 
-            `You win in ${gameState.roundNumber - 1} rounds!`;
+            `You win in ${gameState.roundNumber} rounds!`;
     }
     
     document.getElementById("final-rotation").textContent = 
