@@ -44,6 +44,26 @@ h2 {
     display: none;
 }
 
+/* Hidden utility class */
+.hidden {
+    display: none !important;
+}
+
+/* Sections with hidden toggle */
+.guess-section,
+.feedback-section,
+.guess-buttons,
+#autoplay-guess {
+    display: block;
+}
+
+.guess-section.hidden,
+.feedback-section.hidden,
+.guess-buttons.hidden,
+#autoplay-guess.hidden {
+    display: none;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
