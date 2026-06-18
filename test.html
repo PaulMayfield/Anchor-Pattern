@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anchor Pattern - Test Suite</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+        }
+        .test-group {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+        .test-case {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 3px;
+        }
+        .pass {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .fail {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .summary {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-size: 1.2em;
+        }
+        .summary.all-pass {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .summary.has-fail {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        code {
+            background: #eee;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Anchor Pattern Game - Test Suite</h1>
+        <p>Validating JavaScript implementation against Python logic</p>
+        
+        <div id="results"></div>
+    </div>
+
+    <script src="game.js"></script>
+    <script>
+        let passCount = 0;
+        let failCount = 0;
+
+        function assert(condition, message) {
+            if (condition) {
+                console.log(`✓ ${message}`);
+                passCount++;
+                return `<div class="test-case"><span class="pass">✓ PASS</span>: ${message}</div>`;
+            } else {
+                console.error(`✗ ${message}`);
+                failCount++;
+                return `<div class="test-case"><span class="fail">✗ FAIL</span>: ${message}</div>`;
+            }
+        }
+
+        function assertEquals(actual, expected, message) {
+            const pass = actual === expected;
+            const displayMsg = `${message} (expected: ${expected}, got: ${actual})`;
+            return assert(pass, displayMsg);
+        }
+
+        function deepEquals(obj1, obj2, message) {
+            const pass = JSON.stringify(obj1) === JSON.stringify(obj2);
+            const displayMsg = `${message} (expected: ${JSON.stringify(obj2)}, got: ${JSON.stringify(obj1)})`;
+            return assert(pass, displayMsg);
+        }
+
+        let html = '';
+
+        // Test mod6ToDie
+        html += '<div class="test-group"><h2>mod6ToDie Function</h2>';
+        html += assertEquals(mod6ToDie(0), 6, 'mod6ToDie(0) should return 6');
+        html += assertEquals(mod6ToDie(1), 1, 'mod6ToDie(1) should return 1');
+        html += assertEquals(mod6ToDie(6), 6, 'mod6ToDie(6) should return 6');
+        html += assertEquals(mod6ToDie(7), 1, 'mod6ToDie(7) should return 1');
+        html += assertEquals(mod6ToDie(13), 1, 'mod6ToDie(13) should return 1');
+        html += assertEquals(mod6ToDie(-1), 5, 'mod6ToDie(-1) should return 5');
+        html += '</div>';
+
+        // Test computeCorrectValue
+        html += '<div class="test-group"><h2>computeCorrectValue Function</h2>';
+        html += assertEquals(computeCorrectValue("sum", 1, 2, 3), 6, 'sum(1, 2, 3) = 6');
+        html += assertEquals(computeCorrectValue("sum", 2, 2, 2), 6, 'sum(2, 2, 2) = 6');
+        html += assertEquals(computeCorrectValue("sum", 1, 1, 1), 3, 'sum(1, 1, 1) = 3');
+        html += assertEquals(computeCorrectValue("difference", 5, 2, 1), 4, 'diff(5, 2, 1) = 4');
+        html += assertEquals(computeCorrectValue("difference", 3, 3, 3), 3, 'diff(3, 3, 3) = 3');
+        html += assertEquals(computeCorrectValue("difference", 1, 5, 0), 2, 'diff(1, 5, 0) = 2 (mod 6)');
+        html += '</div>';
+
+        // Test classifyFeedback
+        html += '<div class="test-group"><h2>classifyFeedback Function</h2>';
+        html += assertEquals(classifyFeedback(3, 3, 3), "both", 'guess and roll both correct');
+        html += assertEquals(classifyFeedback(3, 3, 4), "guess_only", 'only guess correct');
+        html += assertEquals(classifyFeedback(3, 4, 3), "roll_only", 'only roll correct');
+        html += assertEquals(classifyFeedback(3, 4, 5), "neither", 'neither correct');
+        html += '</div>';
+
+        // Test advanceHypothesis
+        html += '<div class="test-group"><h2>advanceHypothesis Function</h2>';
+        const hyp1 = new Hypothesis(["sum", "difference"], 2, 0, 1);
+        const advanced1 = advanceHypothesis(hyp1, true);
+        html += assertEquals(advanced1.phaseIndex, 1, 'phaseIndex advances to 1');
+        html += assertEquals(advanced1.c, 3, 'c advances to (1 + 2) % 6 = 3');
+        
+        const hyp2 = new Hypothesis(["sum", "difference"], 3, 1, 2);
+        const advanced2 = advanceHypothesis(hyp2, true);
+        html += assertEquals(advanced2.phaseIndex, 0, 'phaseIndex wraps to 0');
+        html += assertEquals(advanced2.c, 5, 'c advances to (2 + 3) % 6 = 5');
+        
+        const hyp3 = new Hypothesis(["sum", "difference"], 2, 0, 1);
+        const notAdvanced = advanceHypothesis(hyp3, false);
+        html += assertEquals(notAdvanced.phaseIndex, 0, 'phaseIndex stays 0 when exited is false');
+        html += assertEquals(notAdvanced.c, 1, 'c stays 1 when exited is false');
+        html += '</div>';
+
+        // Test initialHypotheses
+        html += '<div class="test-group"><h2>initialHypotheses Function</h2>';
+        const hypotheses = initialHypotheses();
+        html += assertEquals(hypotheses.length, 10, 'Should have 10 hypotheses (2 rotations × 5 offsets)');
+        
+        // Check that all offsets 1-5 are represented
+        const offsets = new Set(hypotheses.map(h => h.offset));
+        html += assertEquals(offsets.size, 5, 'All 5 offsets should be present');
+        html += assert(hypotheses.every(h => h.phaseIndex === 0), 'All should start at phaseIndex 0');
+        html += assert(hypotheses.every(h => h.c === 0), 'All should start with c = 0');
+        html += '</div>';
+
+        // Test filterHypotheses
+        html += '<div class="test-group"><h2>filterHypotheses Function</h2>';
+        const testHyp = new Hypothesis(["sum", "difference"], 2, 0, 0);
+        const testHyps = [testHyp];
+        
+        // If guess=3, roll=3, and sum(1, 2, 0) = 3, then feedback should be "both"
+        const filtered = filterHypotheses(testHyps, 1, 2, 3, 3, "both");
+        html += assertEquals(filtered.length, 1, 'Hypothesis matching "both" feedback should be kept');
+        html += assertEquals(filtered[0].phaseIndex, 1, 'Should advance phase after "both"');
+        html += assertEquals(filtered[0].c, 2, 'Should advance c after "both"');
+        
+        // Test filtering out non-matching
+        const filtered2 = filterHypotheses(testHyps, 1, 2, 3, 3, "neither");
+        html += assertEquals(filtered2.length, 0, 'Hypothesis not matching "neither" should be filtered out');
+        html += '</div>';
+
+        // Test chooseAutoplayGuess
+        html += '<div class="test-group"><h2>chooseAutoplayGuess Function</h2>';
+        const hyps = [
+            new Hypothesis(["sum", "difference"], 1, 0, 0),
+            new Hypothesis(["sum", "difference"], 2, 0, 0)
+        ];
+        const guess = chooseAutoplayGuess(hyps, 1, 1);
+        html += assert([1, 2, 3, 4, 5, 6].includes(guess), `Autoplay guess should be 1-6, got ${guess}`);
+        html += '</div>';
+
+        // Test getPermutations
+        html += '<div class="test-group"><h2>getPermutations Function</h2>';
+        const perms = getPermutations(["sum", "difference"]);
+        html += assertEquals(perms.length, 2, 'Should have 2 permutations for 2 items');
+        html += deepEquals(perms.sort().join(','), [["difference","sum"],["sum","difference"]].sort().join(','), 'Should have both orderings');
+        html += '</div>';
+
+        // Test shuffle doesn't break randomness
+        html += '<div class="test-group"><h2>shuffle Function</h2>';
+        const original = [1, 2, 3, 4, 5];
+        const shuffled = shuffle(original);
+        html += assert(shuffled.length === 5, 'Shuffled array should have 5 elements');
+        html += assert(shuffled.every(n => [1,2,3,4,5].includes(n)), 'Shuffled array should contain same elements');
+        html += '</div>';
+
+        // Summary
+        const total = passCount + failCount;
+        const summaryClass = failCount === 0 ? 'all-pass' : 'has-fail';
+        const summaryText = failCount === 0 
+            ? `✅ All ${total} tests passed!` 
+            : `❌ ${failCount} of ${total} tests failed`;
+        
+        html += `<div class="summary ${summaryClass}">${summaryText}</div>`;
+
+        document.getElementById('results').innerHTML = html;
+        console.log(`\nTest Summary: ${passCount} passed, ${failCount} failed`);
+    </script>
+</body>
+</html>
