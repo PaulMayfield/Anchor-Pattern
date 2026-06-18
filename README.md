@@ -2,6 +2,8 @@
 
 A browser-based implementation of the Anchor Pattern game. Test your ability to identify hidden mathematical patterns by making guesses and analyzing feedback!
 
+## 🎮 [Play the Game](https://paulmayfield.github.io/Anchor-Pattern/)
+
 ## How to Play
 
 **Win Condition:** Get two consecutive rounds where BOTH your guess and your dice roll are correct.
